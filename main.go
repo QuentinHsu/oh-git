@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"time"
 )
 
 type Commit struct {
@@ -32,7 +33,14 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	startDate := time.Now().AddDate(0, 0, -*statDays).Format("2006-01-02")
+	endDate := time.Now().Format("2006-01-02")
+	duration := time.Now().Sub(time.Now().AddDate(0, 0, -*statDays))
+	// 将小时数转换为天数
+	days := int(duration.Hours() / 24)
+	fmt.Printf("Stat Range: %s - %s (%d days)\n\n", startDate, endDate, days)
 	commits := strings.Split(string(output), "\n")
+	fmt.Printf("Number of commits: %d\n\n", len(commits))
 	if len(commits) == 0 || (len(commits) == 1 && commits[0] == "") {
 		fmt.Println("\nNo results.")
 		return
@@ -41,12 +49,12 @@ func main() {
 		if commit != "" {
 			fields := strings.Split(commit, "|")
 			if len(fields) == 3 {
-				c := Commit{
+				commit := Commit{
 					Hash:    fields[0],
 					Author:  fields[1],
 					Message: fields[2],
 				}
-				fmt.Printf("Hash: %s\nAuthor: %s\nMessage: %s\n", c.Hash, c.Author, c.Message)
+				fmt.Printf("Hash: %s\nAuthor: %s\nMessage: %s\n\n", commit.Hash, commit.Author, commit.Message)
 			}
 		}
 	}
