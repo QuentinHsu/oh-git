@@ -19,6 +19,7 @@ type Commit struct {
 func main() {
 	repoPath := flag.String("p", "", "repository path")
 	statDays := flag.Int("stat-day", 7, "number of days to include in the stats")
+	filterUser := flag.String("user", "", "filter commits by user")
 	flag.Parse()
 	if *repoPath == "" {
 		wd, err := os.Getwd()
@@ -27,7 +28,11 @@ func main() {
 		}
 		repoPath = &wd
 	}
-	cmd := exec.Command("git", "log", "--pretty=format:%H|%an|%s", fmt.Sprintf("--since=%d.days.ago", *statDays))
+	cmdArgs := []string{"log", "--pretty=format:%H|%an|%s", fmt.Sprintf("--since=%d.days.ago", *statDays)}
+	if *filterUser != "" {
+		cmdArgs = append(cmdArgs, fmt.Sprintf("--author=%s", *filterUser))
+	}
+	cmd := exec.Command("git", cmdArgs...)
 	cmd.Dir = *repoPath
 	output, err := cmd.Output()
 	if err != nil {
