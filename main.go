@@ -8,6 +8,8 @@ import (
 	"os/exec"
 	"strings"
 	"time"
+
+	"github.com/fatih/color"
 )
 
 type Commit struct {
@@ -17,6 +19,18 @@ type Commit struct {
 }
 
 func main() {
+	// 创建一个带有颜色的 Logger
+	logger := log.New(color.Output, "", log.LstdFlags)
+	// 设置日志输出颜色
+	// logger.SetPrefix(color.GreenString("[INFO] "))
+
+	logger.SetFlags(logger.Flags() &^ (log.Ldate | log.Ltime)) // 移除默认的日期和时间标记
+	// 设置标题为绿色，值为黄色
+	logTitleColor := color.New(color.FgGreen).PrintfFunc()
+	logValueColor := color.New(color.FgYellow).PrintfFunc()
+
+	logger.Println(color.GreenString("\noh-git v1.0.0\n"))
+
 	repoPath := flag.String("p", "", "repository path")
 	statDays := flag.Int("stat-day", 1, "number of days to include in the stats")
 	filterUser := flag.String("user", "", "filter commits by user")
@@ -49,13 +63,16 @@ func main() {
 	duration := endDate.Sub(startDate)
 	// 将小时数转换为天数
 	days := int(duration.Hours()/24) + 1
-	fmt.Printf("Stat Range: %s - %s (%d days)\n\n", startDateStr, endDateStr, days)
+	logTitleColor("Stat Range: ")
+
+	logValueColor("%s - %s (%d days)\n\n", startDateStr, endDateStr, days)
 	commits := strings.Split(string(output), "\n")
 	if len(commits) == 0 || (len(commits) == 1 && commits[0] == "") {
-		fmt.Println("No results.")
+		logValueColor("No results.")
 		return
 	} else {
-		fmt.Printf("Number of commits: %d\n\n", len(commits))
+		logTitleColor("Number of commits: ")
+		logValueColor("%d\n\n", len(commits))
 	}
 	for _, commit := range commits {
 		if commit != "" {
@@ -66,7 +83,13 @@ func main() {
 					Author:  fields[1],
 					Message: fields[2],
 				}
-				fmt.Printf("Hash: %s\nAuthor: %s\nMessage: %s\n\n", commit.Hash, commit.Author, commit.Message)
+
+				logTitleColor("Hash: ")
+				logValueColor("%s\n", commit.Hash)
+				logTitleColor("Author: ")
+				logValueColor("%s\n", commit.Author)
+				logTitleColor("Message: ")
+				logValueColor("%s\n", commit.Message)
 			}
 		}
 	}
