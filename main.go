@@ -18,7 +18,7 @@ type Commit struct {
 
 func main() {
 	repoPath := flag.String("p", "", "repository path")
-	statDays := flag.Int("stat-day", 7, "number of days to include in the stats")
+	statDays := flag.Int("stat-day", 1, "number of days to include in the stats")
 	filterUser := flag.String("user", "", "filter commits by user")
 	flag.Parse()
 	if *repoPath == "" {
@@ -28,7 +28,15 @@ func main() {
 		}
 		repoPath = &wd
 	}
-	cmdArgs := []string{"log", "--pretty=format:%H|%an|%s", fmt.Sprintf("--since=%d.days.ago", *statDays)}
+	loc, err := time.LoadLocation("") // 加载系统的时区
+	fmtStrDay := "2006-01-02 15:04:05"
+	endDate := time.Now().In(loc).Add(24 * time.Hour).Truncate(24 * time.Hour).Add(-time.Second)
+	endDateStr := endDate.Format(fmtStrDay)
+
+	startDate := endDate.AddDate(0, 0, (-*statDays)).Add(+time.Second)
+	startDateStr := startDate.Format(fmtStrDay)
+
+	cmdArgs := []string{"log", "--pretty=format:%H|%an|%s", fmt.Sprintf("--since=%s", startDateStr), fmt.Sprintf("--until=%s", endDateStr)}
 	if *filterUser != "" {
 		cmdArgs = append(cmdArgs, fmt.Sprintf("--author=%s", *filterUser))
 	}
@@ -38,17 +46,16 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	startDate := time.Now().AddDate(0, 0, -*statDays).Format("2006-01-02")
-	endDate := time.Now().Format("2006-01-02")
-	duration := time.Now().Sub(time.Now().AddDate(0, 0, -*statDays))
+	duration := endDate.Sub(startDate)
 	// 将小时数转换为天数
-	days := int(duration.Hours() / 24)
-	fmt.Printf("Stat Range: %s - %s (%d days)\n\n", startDate, endDate, days)
+	days := int(duration.Hours()/24) + 1
+	fmt.Printf("Stat Range: %s - %s (%d days)\n\n", startDateStr, endDateStr, days)
 	commits := strings.Split(string(output), "\n")
-	fmt.Printf("Number of commits: %d\n\n", len(commits))
 	if len(commits) == 0 || (len(commits) == 1 && commits[0] == "") {
-		fmt.Println("\nNo results.")
+		fmt.Println("No results.")
 		return
+	} else {
+		fmt.Printf("Number of commits: %d\n\n", len(commits))
 	}
 	for _, commit := range commits {
 		if commit != "" {
