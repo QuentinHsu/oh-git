@@ -43,6 +43,9 @@ func main() {
 		repoPath = &wd
 	}
 	loc, err := time.LoadLocation("") // 加载系统的时区
+	if err != nil {
+		log.Fatal(err)
+	}
 	fmtStrDay := "2006-01-02 15:04:05"
 	endDate := time.Now().In(loc).Add(24 * time.Hour).Truncate(24 * time.Hour).Add(-time.Second)
 	endDateStr := endDate.Format(fmtStrDay)
@@ -90,6 +93,7 @@ func main() {
 				logValueColor("%s\n", commit.Author)
 				logTitleColor("Message: ")
 				logValueColor("%s\n", commit.Message)
+				println("")
 			}
 		}
 	}
