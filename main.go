@@ -30,7 +30,7 @@ func main() {
 	logValueColor := color.New(color.FgYellow).PrintfFunc()
 	logTextWring := color.New(color.FgRed).PrintFunc()
 
-	logger.Println(color.GreenString("\nohgit v1.0.0\n"))
+	logger.Println(color.GreenString("\nohgit v0.0.1\n"))
 
 	repoPath := flag.String("path", "", "repository path")
 	statDays := flag.Int("stat-day", 1, "number of days to include in the stats")
