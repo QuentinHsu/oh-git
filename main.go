@@ -28,6 +28,7 @@ func main() {
 	// 设置标题为绿色，值为黄色
 	logTitleColor := color.New(color.FgGreen).PrintfFunc()
 	logValueColor := color.New(color.FgYellow).PrintfFunc()
+	logTextWring := color.New(color.FgRed).PrintFunc()
 
 	logger.Println(color.GreenString("\nohgit v1.0.0\n"))
 
@@ -46,6 +47,17 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	cmdIsGitWorkSpace := exec.Command("git", "rev-parse", "--is-inside-work-tree")
+	cmdIsGitWorkSpace.Dir = *repoPath
+	err = cmdIsGitWorkSpace.Run()
+	if err != nil {
+		if _, ok := err.(*exec.ExitError); ok {
+
+			logTextWring("The current directory is not a git repository.\n")
+			os.Exit(1)
+		}
+		logTextWring(err)
+	}
 	fmtStrDay := "2006-01-02 15:04:05"
 	endDate := time.Now().In(loc).Add(24 * time.Hour).Truncate(24 * time.Hour).Add(-time.Second)
 	endDateStr := endDate.Format(fmtStrDay)
@@ -57,8 +69,10 @@ func main() {
 	if *filterUser != "" {
 		cmdArgs = append(cmdArgs, fmt.Sprintf("--author=%s", *filterUser))
 	}
+
 	cmd := exec.Command("git", cmdArgs...)
 	cmd.Dir = *repoPath
+
 	output, err := cmd.Output()
 	if err != nil {
 		log.Fatal(err)
