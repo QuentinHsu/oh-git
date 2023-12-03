@@ -7,7 +7,7 @@ It is also my Go beginner's practice project.
 ## install
 
 ```zsh
-go install github.com/QuentinHsu/ohgit
+go install github.com/QuentinHsu/ohgit@latest
 ```
 
 ## command
