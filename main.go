@@ -29,7 +29,7 @@ func main() {
 	logTitleColor := color.New(color.FgGreen).PrintfFunc()
 	logValueColor := color.New(color.FgYellow).PrintfFunc()
 
-	logger.Println(color.GreenString("\noh-git v1.0.0\n"))
+	logger.Println(color.GreenString("\nohgit v1.0.0\n"))
 
 	repoPath := flag.String("p", "", "repository path")
 	statDays := flag.Int("stat-day", 1, "number of days to include in the stats")
