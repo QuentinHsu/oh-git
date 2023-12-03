@@ -85,7 +85,7 @@ func main() {
 	logValueColor("%s - %s (%d days)\n\n", startDateStr, endDateStr, days)
 	commits := strings.Split(string(output), "\n")
 	if len(commits) == 0 || (len(commits) == 1 && commits[0] == "") {
-		logValueColor("No results.")
+		logValueColor("No results.\n")
 		return
 	} else {
 		logTitleColor("Number of commits: ")
