@@ -32,7 +32,7 @@ func main() {
 
 	logger.Println(color.GreenString("\nohgit v1.0.0\n"))
 
-	repoPath := flag.String("p", "", "repository path")
+	repoPath := flag.String("path", "", "repository path")
 	statDays := flag.Int("stat-day", 1, "number of days to include in the stats")
 	filterUser := flag.String("user", "", "filter commits by user")
 	flag.Parse()
