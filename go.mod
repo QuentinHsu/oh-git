@@ -1,4 +1,4 @@
-module github.com/QuentinHsu/ohgit
+module ohgit
 
 go 1.21.4
 

@@ -9,6 +9,9 @@ import (
 	"strings"
 	"time"
 
+	"ohgit/pkg/info"
+	"ohgit/pkg/logger"
+
 	"github.com/fatih/color"
 )
 
@@ -19,18 +22,14 @@ type Commit struct {
 }
 
 func main() {
-	// 创建一个带有颜色的 Logger
-	logger := log.New(color.Output, "", log.LstdFlags)
-	// 设置日志输出颜色
-	// logger.SetPrefix(color.GreenString("[INFO] "))
 
-	logger.SetFlags(logger.Flags() &^ (log.Ldate | log.Ltime)) // 移除默认的日期和时间标记
-	// 设置标题为绿色，值为黄色
+	logger.PrintWithBackgroundColor(" Welcome to ohgit ", color.BgGreen)
+
 	logTitleColor := color.New(color.FgGreen).PrintfFunc()
 	logValueColor := color.New(color.FgYellow).PrintfFunc()
 	logTextWring := color.New(color.FgRed).PrintFunc()
 
-	logger.Println(color.GreenString("\nohgit v0.0.1\n"))
+	logger.PrintWithBackgroundColor(" Version: %s, Release: %s\n\n", color.FgGreen, info.Version, info.Release)
 
 	repoPath := flag.String("path", "", "repository path")
 	statDays := flag.Int("stat-day", 1, "number of days to include in the stats")
