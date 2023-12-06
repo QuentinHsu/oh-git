@@ -6,7 +6,7 @@
 cd "$(dirname "$0")" # Switch to the directory where the script is located.
 echo "Generating Release Info\n"
 
-Version="0.0.1 beta3"
+Version="0.0.1 beta4"
 Release=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
 echo "Version: $Version, Release: $Release\n"
 

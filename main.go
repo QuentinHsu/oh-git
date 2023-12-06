@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/QuentinHsu/ohgit/pkg/info"
-	"github.com/QuentinHsu/ohgit/pkg/utils"
+	"github.com/QuentinHsu/ohgit/pkg/logger"
 	"github.com/fatih/color"
 )
 
@@ -23,14 +23,11 @@ type Commit struct {
 }
 
 func main() {
+	logger := &logger.Logger{}
 
-	utils.PrintWithBackgroundColor(" Welcome to ohgit ", color.BgGreen)
+	logger.Info(" Welcome to ohgit ", color.BgGreen)
 
-	logTitleColor := color.New(color.FgGreen).PrintfFunc()
-	logValueColor := color.New(color.FgYellow).PrintfFunc()
-	logTextWring := color.New(color.FgRed).PrintFunc()
-
-	utils.PrintWithBackgroundColor("\n\nVersion: %s, Release: %s\n\n", color.FgGreen, info.Version, info.Release)
+	logger.Info(fmt.Sprintf("\nVersion: %s, Release: %s\n", info.Version, info.Release), color.FgGreen)
 
 	repoPath := flag.String("path", "", "repository path")
 	statDays := flag.Int("stat-day", 1, "number of days to include in the stats")
@@ -53,10 +50,10 @@ func main() {
 	if err != nil {
 		if _, ok := err.(*exec.ExitError); ok {
 
-			logTextWring("The current directory is not a git repository.\n")
+			logger.Error("\nThe current directory is not a git repository.\n")
 			os.Exit(1)
 		}
-		logTextWring(err)
+		logger.Error(err.Error())
 	}
 	fmtStrDay := "2006-01-02 15:04:05"
 	endDate := time.Now().In(loc).Add(24 * time.Hour).Truncate(24 * time.Hour).Add(-time.Second)
@@ -80,16 +77,17 @@ func main() {
 	duration := endDate.Sub(startDate)
 	// 将小时数转换为天数
 	days := int(duration.Hours()/24) + 1
-	logTitleColor("Stat Range: ")
 
-	logValueColor("%s - %s (%d days)\n\n", startDateStr, endDateStr, days)
+	logger.Info("\nStat Range: ", color.FgGreen)
+	logger.Info(fmt.Sprintf("%s - %s (%d days)\n\n", startDateStr, endDateStr, days), color.FgYellow)
+
 	commits := strings.Split(string(output), "\n")
 	if len(commits) == 0 || (len(commits) == 1 && commits[0] == "") {
-		logValueColor("No results.\n")
+		logger.Warn("No results.\n")
 		return
 	} else {
-		logTitleColor("Number of commits: ")
-		logValueColor("%d\n\n", len(commits))
+		logger.Label("Number of commits: ")
+		logger.Value(fmt.Sprintf("%d\n\n", len(commits)))
 	}
 	for _, commit := range commits {
 		if commit != "" {
@@ -101,13 +99,13 @@ func main() {
 					Message: fields[2],
 				}
 
-				logTitleColor("Hash: ")
-				logValueColor("%s\n", commit.Hash)
-				logTitleColor("Author: ")
-				logValueColor("%s\n", commit.Author)
-				logTitleColor("Message: ")
-				logValueColor("%s\n", commit.Message)
-				println("")
+				logger.Label("Hash: ")
+				logger.Value(fmt.Sprintf("%s\n", commit.Hash))
+				logger.Label("Author: ")
+				logger.Value(fmt.Sprintf("%s\n", commit.Author))
+				logger.Label("Message: ")
+				logger.Value(fmt.Sprintf("%s\n\n", commit.Message))
+
 			}
 		}
 	}
