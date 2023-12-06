@@ -9,11 +9,12 @@ import (
 	"strings"
 	"time"
 
-	"ohgit/pkg/info"
-	"ohgit/pkg/logger"
-
+	"github.com/QuentinHsu/ohgit/pkg/info"
+	"github.com/QuentinHsu/ohgit/pkg/utils"
 	"github.com/fatih/color"
 )
+
+var ()
 
 type Commit struct {
 	Hash    string
@@ -23,13 +24,13 @@ type Commit struct {
 
 func main() {
 
-	logger.PrintWithBackgroundColor(" Welcome to ohgit ", color.BgGreen)
+	utils.PrintWithBackgroundColor(" Welcome to ohgit ", color.BgGreen)
 
 	logTitleColor := color.New(color.FgGreen).PrintfFunc()
 	logValueColor := color.New(color.FgYellow).PrintfFunc()
 	logTextWring := color.New(color.FgRed).PrintFunc()
 
-	logger.PrintWithBackgroundColor(" Version: %s, Release: %s\n\n", color.FgGreen, info.Version, info.Release)
+	utils.PrintWithBackgroundColor("\n\nVersion: %s, Release: %s\n\n", color.FgGreen, info.Version, info.Release)
 
 	repoPath := flag.String("path", "", "repository path")
 	statDays := flag.Int("stat-day", 1, "number of days to include in the stats")
