@@ -11,15 +11,17 @@ import (
 
 	"github.com/QuentinHsu/ohgit/pkg/info"
 	"github.com/QuentinHsu/ohgit/pkg/logger"
+
 	"github.com/fatih/color"
 )
 
 var ()
 
 type Commit struct {
-	Hash    string
-	Author  string
-	Message string
+	Hash       string
+	Author     string
+	Message    string
+	CommitDate string
 }
 
 func main() {
@@ -62,7 +64,7 @@ func main() {
 	startDate := endDate.AddDate(0, 0, (-*statDays)).Add(+time.Second)
 	startDateStr := startDate.Format(fmtStrDay)
 
-	cmdArgs := []string{"log", "--pretty=format:%H|%an|%s", fmt.Sprintf("--since=%s", startDateStr), fmt.Sprintf("--until=%s", endDateStr)}
+	cmdArgs := []string{"log", "--pretty=format:%H|%an|%s|%ci", fmt.Sprintf("--since=%s", startDateStr), fmt.Sprintf("--until=%s", endDateStr)}
 	if *filterUser != "" {
 		cmdArgs = append(cmdArgs, fmt.Sprintf("--author=%s", *filterUser))
 	}
@@ -92,19 +94,22 @@ func main() {
 	for _, commit := range commits {
 		if commit != "" {
 			fields := strings.Split(commit, "|")
-			if len(fields) == 3 {
+			if len(fields) == 4 {
 				commit := Commit{
-					Hash:    fields[0],
-					Author:  fields[1],
-					Message: fields[2],
+					Hash:       fields[0],
+					Author:     fields[1],
+					Message:    fields[2],
+					CommitDate: fields[3],
 				}
 
-				logger.Label("Hash: ")
+				logger.Label("Hash:       ")
 				logger.Value(fmt.Sprintf("%s\n", commit.Hash))
-				logger.Label("Author: ")
+				logger.Label("Author:     ")
 				logger.Value(fmt.Sprintf("%s\n", commit.Author))
-				logger.Label("Message: ")
-				logger.Value(fmt.Sprintf("%s\n\n", commit.Message))
+				logger.Label("Message:    ")
+				logger.Value(fmt.Sprintf("%s\n", commit.Message))
+				logger.Label("CommitDate: ")
+				logger.Value(fmt.Sprintf("%s\n\n", commit.CommitDate))
 
 			}
 		}
